@@ -2,7 +2,7 @@
 %define _disable_rebuild_configure 1
 
 Name: dosbox-x
-Version: 2025.02.01
+Version: 2025.05.03
 Release: 1
 Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/dosbox-x-v%{version}.tar.gz
 Summary: DOS Emulator
