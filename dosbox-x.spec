@@ -9,7 +9,7 @@ Summary: DOS Emulator
 URL: https://dosbox-x.com/
 License: GPLv2+
 Group: Emulators
-BuildRequires: autoconf automake
+BuildRequires: autoconf automake m4 libtool make
 BuildRequires: pkgconfig(opusfile)
 BuildRequires: pkgconfig(sdl2)
 BuildRequires: pkgconfig(SDL2_net)
