@@ -1,57 +1,74 @@
 # dosbox-x has its own autogen.sh script that differs a little
-%define _disable_rebuild_configure 1
+%global _disable_rebuild_configure 1
 
-Name: dosbox-x
-Version: 2026.01.02
-Release: 1
-Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/dosbox-x-v%{version}.tar.gz
 Summary: DOS Emulator
-URL: https://dosbox-x.com/
+Name: dosbox-x
+Version: 2026.03.29
 License: GPLv2+
 Group: Emulators
-BuildRequires: autoconf automake m4 libtool make
+Release: 1
+Url: https://dosbox-x.com
+Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/dosbox-x-v%{version}.tar.gz
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: chrpath
+BuildRequires: libtool-base
+BuildRequires: m4
+BuildRequires: make
+BuildRequires: slibtool
+BuildRequires: atomic-devel
+BuildRequires: pkgconfig(alsa)
+BuildRequires: pkgconfig(fluidsynth)
+BuildRequires: pkgconfig(gl)
+BuildRequires: pkgconfig(gtest)
+BuildRequires: pkgconfig(gmock)
+BuildRequires: pkgconfig(iir)
+BuildRequires: pkgconfig(libpng)
+BuildRequires: pkgconfig(mt32emu)
 BuildRequires: pkgconfig(opusfile)
 BuildRequires: pkgconfig(sdl2)
 BuildRequires: pkgconfig(SDL2_net)
 BuildRequires: pkgconfig(SDL2_image)
 BuildRequires: pkgconfig(slirp) >= 4.6.1
-BuildRequires: pkgconfig(gl)
-BuildRequires: pkgconfig(fluidsynth)
-BuildRequires: pkgconfig(mt32emu)
-BuildRequires: pkgconfig(libpng)
-BuildRequires: pkgconfig(alsa)
-BuildRequires: pkgconfig(gtest)
-BuildRequires: pkgconfig(gmock)
-BuildRequires: pkgconfig(iir)
 BuildRequires: pkgconfig(speexdsp)
-BuildRequires: atomic-devel
+BuildRequires: pkgconfig(x11)
+BuildRequires: pkgconfig(xrandr)
 Obsoletes: dosbox < %{EVRD}
 
 %description
-DOSBox is a DOS emulator, emulating 286/386 CPUs, filesystems,
-XMS/EMS, various graphics cards and sound cards.
+This is a DOS emulator, emulating 286/386 CPUs, filesystems, XMS/EMS, various
+graphics cards and sound cards. It is a fork of DOSBox that tries to modernize
+the codebase and add new features.
 
-DOSBox-x is a fork of DOSBox that tries to modernize the codebase
-and add new features.
+%files
+%license COPYING
+%doc CHANGELOG README.*
+%{_bindir}/%{name}
+%{_datadir}/bash-completion/completions/%{name}
+%{_datadir}/icons/hicolor/*/apps/%{name}.*
+%{_datadir}/applications/com.dosbox_x.DOSBox-X.desktop
+%{_datadir}/metainfo/com.dosbox_x.DOSBox-X.metainfo.xml
+%{_datadir}/%{name}
+%{_mandir}/man1/%{name}.1*
+
+#-----------------------------------------------------------------------------
 
 %prep
 %autosetup -p1 -n %{name}-%{name}-v%{version}
+# Remove deprecated entries in configure.ac
+autoupdate
 ./autogen.sh || :
 
 %configure \
 	--enable-sdl2
 
+
 %build
 %make_build
+
 
 %install
 %make_install
 
-%files
-%{_bindir}/dosbox-x
-%{_datadir}/bash-completion/completions/dosbox-x
-%{_datadir}/icons/hicolor/*/apps/dosbox-x.*
-%{_datadir}/applications/com.dosbox_x.DOSBox-X.desktop
-%{_datadir}/metainfo/com.dosbox_x.DOSBox-X.metainfo.xml
-%{_datadir}/dosbox-x
-%{_mandir}/man1/dosbox-x.1*
+# Fix chrpath
+chrpath -d %{buildroot}%{_bindir}/%{name}
