@@ -3,37 +3,47 @@
 
 Summary: DOS Emulator
 Name: dosbox-x
-Version: 2026.03.29
+Version: 2026.07.02
 License: GPLv2+
 Group: Emulators
 Release: 1
 Url: https://dosbox-x.com
-Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/dosbox-x-v%{version}.tar.gz
+Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/%{name}-%{name}-v%{version}.tar.gz
+Patch0:	dosbox-x-2026.07.02-fix-FSF-address.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: chrpath
+BuildRequires: dos2unix
 BuildRequires: libtool-base
 BuildRequires: m4
 BuildRequires: make
+BuildRequires: nasm
 BuildRequires: slibtool
 BuildRequires: atomic-devel
+BuildRequires: SDL_sound-devel
 BuildRequires: pkgconfig(alsa)
 BuildRequires: pkgconfig(fluidsynth)
+BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(gl)
 BuildRequires: pkgconfig(gtest)
 BuildRequires: pkgconfig(gmock)
 BuildRequires: pkgconfig(iir)
+BuildRequires: pkgconfig(libavcodec)
+BuildRequires: pkgconfig(libpcap)
 BuildRequires: pkgconfig(libpng)
 BuildRequires: pkgconfig(mt32emu)
+BuildRequires: pkgconfig(ncurses)
 BuildRequires: pkgconfig(opusfile)
 BuildRequires: pkgconfig(sdl2)
+#BuildRequires: pkgconfig(sdl3)
 BuildRequires: pkgconfig(SDL2_net)
 BuildRequires: pkgconfig(SDL2_image)
 BuildRequires: pkgconfig(slirp) >= 4.6.1
 BuildRequires: pkgconfig(speexdsp)
 BuildRequires: pkgconfig(x11)
 BuildRequires: pkgconfig(xrandr)
-Obsoletes: dosbox < %{EVRD}
+BuildRequires: pkgconfig(zlib)
+%rename dosbox
 
 %description
 This is a DOS emulator, emulating 286/386 CPUs, filesystems, XMS/EMS, various
@@ -55,20 +65,29 @@ the codebase and add new features.
 
 %prep
 %autosetup -p1 -n %{name}-%{name}-v%{version}
+
+# Fix EOL
+dos2unix CHANGELOG
+dos2unix README.video
+dos2unix README.md
+
+
+%build
 # Remove deprecated entries in configure.ac
 autoupdate
 ./autogen.sh || :
 
+# Using SDL3 disables some things  (gamelink support, internal modem and IPX support)
+# and  makes the build fail because of a missing include... stay on SDL2 for now
 %configure \
-	--enable-sdl2
+		--enable-sdl2 \
+		--enable-avcodec
 
-
-%build
 %make_build
 
 
 %install
 %make_install
 
-# Fix chrpath
+# Fix rpath
 chrpath -d %{buildroot}%{_bindir}/%{name}
