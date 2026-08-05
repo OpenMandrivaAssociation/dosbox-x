@@ -1,15 +1,14 @@
-# dosbox-x has its own autogen.sh script that differs a little
+# Dosbox-x has its own autogen.sh script that differs a little from the one we have
 %global _disable_rebuild_configure 1
 
 Summary: DOS Emulator
 Name: dosbox-x
-Version: 2026.07.02
+Version: 2026.08.02
 License: GPLv2+
 Group: Emulators
 Release: 1
 Url: https://dosbox-x.com
 Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/%{name}-%{name}-v%{version}.tar.gz
-Patch0:	dosbox-x-2026.07.02-fix-FSF-address.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: chrpath
@@ -71,6 +70,10 @@ dos2unix CHANGELOG
 dos2unix README.video
 dos2unix README.md
 
+# Fix FSF address
+sed -i 's/51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA/31 Milk Street, # 960789, Boston, MA 02196, USA/g' COPYING
+sed -i 's/51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA/31 Milk Street, # 960789, Boston, MA 02196, USA/g' contrib/glshaders/crt-caligari.glsl
+
 
 %build
 # Remove deprecated entries in configure.ac
@@ -78,7 +81,7 @@ autoupdate
 ./autogen.sh || :
 
 # Using SDL3 disables some things  (gamelink support, internal modem and IPX support)
-# and  makes the build fail because of a missing include... stay on SDL2 for now
+# and makes the build fail because of a missing include... stay on SDL2 for now
 %configure \
 		--enable-sdl2 \
 		--enable-avcodec
@@ -91,3 +94,6 @@ autoupdate
 
 # Fix rpath
 chrpath -d %{buildroot}%{_bindir}/%{name}
+
+# Drop duplicate file
+rm -f %{buildroot}%{_datadir}/CHANGELOG
