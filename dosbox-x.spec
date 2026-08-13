@@ -6,9 +6,10 @@ Name: dosbox-x
 Version: 2026.08.02
 License: GPLv2+
 Group: Emulators
-Release: 4
+Release: 5
 Url: https://dosbox-x.com
 Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/%{name}-%{name}-v%{version}.tar.gz
+Patch0: dosbox-x-ffmpeg9-sample-fmts.patch
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: chrpath
