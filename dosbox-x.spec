@@ -6,7 +6,7 @@ Name: dosbox-x
 Version: 2026.08.02
 License: GPLv2+
 Group: Emulators
-Release: 1
+Release: 2
 Url: https://dosbox-x.com
 Source0: https://github.com/joncampbell123/dosbox-x/archive/refs/tags/%{name}-%{name}-v%{version}.tar.gz
 BuildRequires: autoconf
